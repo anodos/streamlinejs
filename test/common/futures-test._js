@@ -10,6 +10,25 @@ asyncTest("no timeout", 1, function(_) {
 	equals(f(_), 'a', "no timeout");
 	start();
 });
+
+asyncTest("thennable future", 1, function(_) {
+	(function(cb) {
+		var testfunc = async function() {
+			equals(await delay(1, 'z', !_), 'z', 'thennable future z');
+			equals(await delay(1, 'y', !_), 'a', 'thennable future y');
+			equals(await delay(1, 'x', !_), 'x', 'thennable future x');
+		}
+
+		testfunc
+			.then(function(result) {
+				cb(null, result);
+			})
+			.catch(function(error) {
+				cb(error);
+			});
+	})(_);
+	start();
+});
 /*
 asyncTest("result before timeout", 1, function(_) {
 	var f = delay(1, 'a');
